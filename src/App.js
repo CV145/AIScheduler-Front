@@ -1,24 +1,23 @@
 import logo from './logo.svg';
 import './App.css';
+import {SignInButton} from './Components/SignInButton'
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import CalendarComponent from './Components/Calendar';
+import { GoogleAuthProvider } from './Contexts/GoogleAuthContext';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <GoogleOAuthProvider clientId='581682671017-2ah5d48ucdblall52a02ld6g0pc2l3kt.apps.googleusercontent.com'>
+
+    {/*The Provider is a context wrapped around components that need google authentication*/}
+    <GoogleAuthProvider>
+      <div className="App">
+        <SignInButton/>
+        <CalendarComponent/>
+      </div>
+    </GoogleAuthProvider>
+
+    </GoogleOAuthProvider>
   );
 }
 
