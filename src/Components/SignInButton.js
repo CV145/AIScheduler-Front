@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
 
 export const SignInButton = () => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
-  const { handleSignIn } = useGoogleAuth();
+  console.log("Context: ", useGoogleAuth());
+  const authContext = useGoogleAuth();
 
+  const { isSignedIn, handleSignIn, handleSignOut } = useGoogleAuth();
 
   const googleLogin = useGoogleLogin({
     onSuccess: tokenResponse => 
@@ -13,20 +14,12 @@ export const SignInButton = () => {
         //Successful login actions
         console.log(tokenResponse);
         handleSignIn(tokenResponse.access_token);
-        setIsSignedIn(true);
     },
     onError: () => 
     {
         console.log('Login Failed');
-        setIsSignedIn(false);
     }
   });
-
-  const handleSignOut = () => {
-    // Implement sign-out logic
-    setIsSignedIn(false);
-  };
-  
 
   return (
     <div>

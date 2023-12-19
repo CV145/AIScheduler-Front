@@ -9,7 +9,7 @@ const CalendarComponent = () => {
   /*
   Use the Google Token for API requests. Stored in the GoogleAuth Context that wraps this component
   */
-  const {googleToken} = useGoogleAuth();
+  const {googleToken, isSignedIn} = useGoogleAuth();
 
   useEffect(() => {
     const fetchCalendarData = async () => {

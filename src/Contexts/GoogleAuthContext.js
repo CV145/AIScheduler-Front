@@ -7,17 +7,20 @@ export const useGoogleAuth = () => useContext(GoogleAuthContext);
 
 export const GoogleAuthProvider = ({ children }) => {
   const [googleToken, setGoogleToken] = useState(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   const handleSignIn = (token) => {
     setGoogleToken(token);
+    setIsSignedIn(true);
   };
 
   const handleSignOut = () => {
     setGoogleToken(null);
+    setIsSignedIn(false);
   };
 
   return (
-    <GoogleAuthContext.Provider value={{ googleToken, handleSignIn, handleSignOut }}>
+    <GoogleAuthContext.Provider value={{ googleToken, isSignedIn, handleSignIn, handleSignOut }}>
       {children}
     </GoogleAuthContext.Provider>
   );
@@ -31,4 +34,6 @@ export const GoogleAuthProvider = ({ children }) => {
 React.createContext() returns a Context object
 
 Provider componetns allow child components to have access to given values like googleToken and handleSignIn/Out functions
+
+We pass functions down to call them in the child components
 */
