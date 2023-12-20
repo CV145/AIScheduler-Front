@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
 
-const CalendarComponent = () => {
+const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
   const { googleToken } = useGoogleAuth();
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,8 +47,23 @@ const CalendarComponent = () => {
 
   // Fetch data when component mounts or googleToken changes
   useEffect(() => {
+
+    //Refresh when state is true
+    if (isRefreshing)
+    {
+        fetchCalendarData();
+        setIsRefreshing(false);
+    }
+
+
+    //Poll every 60 seconds
+    const fetchInterval = setInterval(fetchCalendarData, 60000);
+    //Fetch immediately on mount
     fetchCalendarData();
-  }, [googleToken]);
+
+    //Clean on unmount
+    return () => clearInterval(fetchInterval);
+  }, [googleToken, isRefreshing, setIsRefreshing]);
 
   if (isLoading) {
     return <div>Loading calendar data...</div>;
@@ -61,6 +76,7 @@ const CalendarComponent = () => {
   return (
     <div>
       <h2>Tomorrow's Calendar Events</h2>
+      <button onClick={fetchCalendarData}>Refresh Calendar</button>
       <ul>
         {calendarEvents.map(event => (
           <li key={event.id}>
