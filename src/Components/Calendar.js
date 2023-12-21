@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
 
-const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
+const CalendarComponent = ({isLoading, setIsLoading, shouldFetchData, setShouldFetchData}) => {
   const { googleToken } = useGoogleAuth();
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Function to get start and end times for tomorrow
@@ -25,8 +24,10 @@ const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
 
     const { start, end } = getTomorrowDates();
     setIsLoading(true);
+    console.log('fetching calendar data');
 
     try {
+        console.log('Beginning data fetch');
       const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${start}&timeMax=${end}`, {
         headers: {
           Authorization: `Bearer ${googleToken}`
@@ -41,7 +42,9 @@ const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
     } catch (err) {
       setError(err.message);
     } finally {
+        console.log('Data finished fetching');
       setIsLoading(false);
+      setShouldFetchData(false); //After data is fetched
     }
   };
 
@@ -49,10 +52,9 @@ const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
   useEffect(() => {
 
     //Refresh when state is true
-    if (isRefreshing)
+    if (shouldFetchData)
     {
         fetchCalendarData();
-        setIsRefreshing(false);
     }
 
 
@@ -63,10 +65,10 @@ const CalendarComponent = ({isRefreshing, setIsRefreshing}) => {
 
     //Clean on unmount
     return () => clearInterval(fetchInterval);
-  }, [googleToken, isRefreshing, setIsRefreshing]);
+  }, [googleToken, shouldFetchData, setShouldFetchData]);
 
   if (isLoading) {
-    return <div>Loading calendar data...</div>;
+    return <div>Building calendar data...</div>;
   }
 
   if (error) {

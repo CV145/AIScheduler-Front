@@ -6,17 +6,24 @@ import SchedulePromptForm from './SchedulePromptForm';
 
 const AuthenticatedApp = () => {
   const { isSignedIn } = useGoogleAuth();
-  const [calendarIsRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [shouldFetchCalendarData, setShouldFetchCalendarData] = useState(false);
 
-  const handleScheduleUpdate = useCallback(() => {
-    setIsRefreshing(true);
+  const handleScheduleSubmit = useCallback(() => {
+    setIsLoading(true);
   }, []);
+
+  const handleScheduleUpdated = () => {
+    // Trigger actions to refresh calendar data...
+    setShouldFetchCalendarData(true);
+};
 
   return (
     <div className="App">
       <SignInButton />
-      {isSignedIn && <CalendarComponent isRefreshing={calendarIsRefreshing} setIsRefreshing={setIsRefreshing}/>}
-      <SchedulePromptForm onScheduleUpdate={handleScheduleUpdate}/>
+      {isSignedIn && <CalendarComponent isLoading={isLoading} setIsLoading={setIsLoading} shouldFetchData={shouldFetchCalendarData} setShouldFetchData={setShouldFetchCalendarData} />}
+      
+      <SchedulePromptForm onScheduleSubmit={handleScheduleSubmit} onScheduleUpdated={handleScheduleUpdated}/>
     </div>
   );
 };

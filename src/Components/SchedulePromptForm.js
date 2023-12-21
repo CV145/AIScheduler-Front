@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
 
-const SchedulePromptForm = ({ onScheduleUpdate }) => {
+const SchedulePromptForm = ({ onScheduleSubmit, onScheduleUpdated }) => {
     const { googleToken } = useGoogleAuth();
     const [schedulePrompt, setSchedulePrompt] = useState('');
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-  
+
       if (!googleToken) {
         console.error("Google token is not available.");
         return;
       }
+    
+      // Notify that the update process is starting
+      onScheduleSubmit(); // This should set isLoading to true in parent
+
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
       try {
         const response = await fetch('https://localhost:7112/Schedule', {
@@ -20,7 +25,7 @@ const SchedulePromptForm = ({ onScheduleUpdate }) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${googleToken}`
           },
-          body: JSON.stringify({ googleToken, schedulePrompt })
+          body: JSON.stringify({ googleToken, schedulePrompt, userTimeZone })
         });
   
         if (!response.ok) {
@@ -29,11 +34,12 @@ const SchedulePromptForm = ({ onScheduleUpdate }) => {
   
         // Clear the input field after successful submission
         setSchedulePrompt('');
-  
-        // Notify the parent component (like App) to refresh the calendar
-        onScheduleUpdate();
+
+        // Notify that the update process is completed
+        onScheduleUpdated(); // This should fetch new calendar data and reset isLoading
       } catch (error) {
         console.error('Error:', error);
+        onScheduleUpdated();
       }
     };
 
@@ -54,7 +60,7 @@ const SchedulePromptForm = ({ onScheduleUpdate }) => {
         style={inputStyle}
         value={schedulePrompt}
         onChange={(e) => setSchedulePrompt(e.target.value)}
-        placeholder="Enter your desired schedule for tomorrow"
+        placeholder="Generate a schedule for tomorrow that allows me to..."
       />
       <button type="submit">Send</button>
     </form>
@@ -73,5 +79,6 @@ POST
 {
     "googleToken": "string",
     "schedulePrompt": "string"
+    "userTimeZone": "string"
 }
 */
