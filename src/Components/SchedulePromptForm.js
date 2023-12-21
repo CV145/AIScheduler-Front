@@ -4,12 +4,19 @@ import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
 const SchedulePromptForm = ({ onScheduleSubmit, onScheduleUpdated }) => {
     const { googleToken } = useGoogleAuth();
     const [schedulePrompt, setSchedulePrompt] = useState('');
+    const [userConsent, setUserConsent] = useState(false);
   
     const handleSubmit = async (e) => {
       e.preventDefault();
 
       if (!googleToken) {
         console.error("Google token is not available.");
+        return;
+      }
+
+      if (!userConsent) {
+        // Display an error message or prevent submission without consent
+        console.error("Please provide consent to modify your Google Calendar.");
         return;
       }
     
@@ -43,6 +50,10 @@ const SchedulePromptForm = ({ onScheduleSubmit, onScheduleUpdated }) => {
       }
     };
 
+    const handleConsentChange = (e) => {
+        setUserConsent(e.target.checked);
+      };
+
     // Styles for the input field
   const inputStyle = {
     width: '100%',        // Full width
@@ -55,7 +66,21 @@ const SchedulePromptForm = ({ onScheduleSubmit, onScheduleUpdated }) => {
   };
   
   return (
-    <form onSubmit={handleSubmit}>
+    <div>
+        {!userConsent && (
+        <div style={{ color: 'red' }}>Please provide consent to the calendar modifications.</div>
+      )}
+      <form onSubmit={handleSubmit}>
+    <div className="warning">
+        <label>
+          <input
+            type="checkbox"
+            checked={userConsent}
+            onChange={handleConsentChange}
+          />
+          I understand and consent to modifying my Google Calendar schedule for tomorrow.
+        </label>
+      </div>
       <textarea
         style={inputStyle}
         value={schedulePrompt}
@@ -64,6 +89,8 @@ const SchedulePromptForm = ({ onScheduleSubmit, onScheduleUpdated }) => {
       />
       <button type="submit">Send</button>
     </form>
+    </div>
+    
   );
   };
 

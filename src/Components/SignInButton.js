@@ -12,7 +12,6 @@ export const SignInButton = () => {
     onSuccess: tokenResponse => 
     {
         //Successful login actions
-        console.log(tokenResponse);
         handleSignIn(tokenResponse.access_token);
     },
     onError: () => 
