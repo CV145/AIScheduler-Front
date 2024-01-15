@@ -102,37 +102,40 @@ const CalendarComponent = ({ isLoading, setIsLoading, shouldFetchData, setShould
           <Typography variant="h4" style={{ margin: '20px 0', textAlign: 'center' }}>
             Tomorrow's Calendar Events
           </Typography>
-          <div style={{ textAlign: 'center', marginBottom: '10px' }}> {/* Updated this line */}
+          <div style={{ textAlign: 'center', marginBottom: '10px' }}>
             <IconButton color="primary" onClick={fetchCalendarData}>
               <RefreshIcon />
             </IconButton>
           </div>
-          <List>
-            {calendarEvents.length === 0 ? (
-              <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
-                No events scheduled for tomorrow.
-              </Typography>
-            ) : (
-              calendarEvents.map(event => (
-                <ListItem key={event.id} style={{ border: '1px solid #eee', margin: '10px 0', borderRadius: '4px' }}>
-                  <ListItemText
-                    primary={event.summary}
-                    secondary={
-                      event.start && event.end && event.start.dateTime && event.end.dateTime
-                        ? `${new Date(event.start.dateTime).toLocaleTimeString()} - ${new Date(
-                          event.end.dateTime
-                        ).toLocaleTimeString()}`
-                        : 'All day'
-                    }
-                  />
-                </ListItem>
-              ))
-            )}
-          </List>
+          <div style={{ maxHeight: '300px', overflowY: 'auto' }}> {/* Set maximum height and enable scrolling */}
+            <List>
+              {calendarEvents.length === 0 ? (
+                <Typography variant="subtitle1" style={{ textAlign: 'center' }}>
+                  No events scheduled for tomorrow.
+                </Typography>
+              ) : (
+                calendarEvents.map(event => (
+                  <ListItem key={event.id} style={{ border: '1px solid #eee', margin: '10px 0', borderRadius: '4px' }}>
+                    <ListItemText
+                      primary={event.summary}
+                      secondary={
+                        event.start && event.end && event.start.dateTime && event.end.dateTime
+                          ? `${new Date(event.start.dateTime).toLocaleTimeString()} - ${new Date(
+                            event.end.dateTime
+                          ).toLocaleTimeString()}`
+                          : 'All day'
+                      }
+                    />
+                  </ListItem>
+                ))
+              )}
+            </List>
+          </div>
         </div>
       )}
     </Container>
   );
+
 
 };
 
