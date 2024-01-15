@@ -1,31 +1,41 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
 import { useGoogleAuth } from '../Contexts/GoogleAuthContext';
+import { Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 
 export const SignInButton = () => {
+  const buttonStyle = {
+    margin: '20px 0'
+  };
+
+  const navigate = useNavigate();
+
+
+
   console.log("Context: ", useGoogleAuth());
   const authContext = useGoogleAuth();
 
   const { isSignedIn, handleSignIn, handleSignOut } = useGoogleAuth();
 
   const googleLogin = useGoogleLogin({
-    onSuccess: tokenResponse => 
-    {
-        //Successful login actions
-        handleSignIn(tokenResponse.access_token);
+    onSuccess: tokenResponse => {
+      //Successful login actions
+      handleSignIn(tokenResponse.access_token);
+      navigate('/dashboard');
     },
-    onError: () => 
-    {
-        console.log('Login Failed');
+    onError: () => {
+      console.log('Login Failed');
     }
   });
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {isSignedIn ? (
-        <button onClick={handleSignOut}>Sign Out</button>
+        <Button style={buttonStyle} variant="contained" color="primary" onClick={handleSignOut}>Sign Out</Button>
       ) : (
-        <button onClick={() => googleLogin()}>Sign in with Google</button>
+        <Button style={buttonStyle} variant="contained" color="primary" onClick={() => googleLogin()}>Sign in with Google</Button>
       )}
     </div>
   );
